@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DEPS="ant git javac patch svn tar"
+
 echo "## Step 00: initialize"
 (
   if ! [ -d build ]; then
@@ -8,6 +10,16 @@ echo "## Step 00: initialize"
     mkdir build/src/trunk
   fi
 )
+
+command_exists () {
+  type -P "$1" &>/dev/null || { echo "!!! Missing dependency "$1"" >&2; exit 1; }
+}
+
+checkdeps() {
+  for cmd in $DEPS ; do
+    command_exists ${cmd} ;
+  done
+}
 
 fetch() {
 (
@@ -100,6 +112,7 @@ buildcustom() {
   done
 }
 
+checkdeps
 fetchall
 buildsrc
 patchsrc "patch"
