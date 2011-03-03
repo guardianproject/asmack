@@ -37,7 +37,8 @@ gitfetch() {
 }
 
 fetchall() {
-  gitfetch "git://github.com/rtreffer/smack.git" "smack"
+#  gitfetch "git://github.com/rtreffer/smack.git" "smack"
+  fetch "http://svn.igniterealtime.org/svn/repos/smack/trunk" "smack"
   fetch "http://svn.apache.org/repos/asf/qpid/trunk/qpid/java/management/common/src/main/" "qpid"
   fetch "http://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/classlib/modules/auth/src/main/java/common/" "harmony"
   fetch "https://dnsjava.svn.sourceforge.net/svnroot/dnsjava/trunk" "dnsjava"
