@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 DEPS="ant git javac patch svn tar"
 
 echo "## Step 00: initialize"
@@ -190,9 +192,9 @@ fi
 buildsrc
 patchsrc "patch"
 build
-buildcustom
+#buildcustom
 
-if which advzip; then
-  find build/*.jar -exec advzip -z4 '{}' ';'
-  find build/*.zip -exec advzip -z4 '{}' ';'
-fi
+#if which advzip; then
+#  find build/*.jar -exec advzip -z4 '{}' ';'
+#  find build/*.zip -exec advzip -z4 '{}' ';'
+#fi
