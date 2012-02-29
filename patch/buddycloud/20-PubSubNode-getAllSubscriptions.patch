@@ -7,7 +7,7 @@ Index: org/jivesoftware/smackx/pubsub/PubSubElementType.java
  	SUBSCRIPTION("subscription", PubSubNamespace.BASIC),
  	SUBSCRIPTIONS("subscriptions", PubSubNamespace.BASIC), 
 +	SUBSCRIPTIONS_OWNER("subscriptions", PubSubNamespace.OWNER),
- 	UNSUBSCRIBE("unsubscribe", PubSubNamespace.BASIC); 
+ 	UNSUBSCRIBE("unsubscribe", PubSubNamespace.BASIC);
  
  	private String eName;
 Index: org/jivesoftware/smackx/pubsub/Node.java
