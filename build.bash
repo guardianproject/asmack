@@ -93,8 +93,6 @@ fetchall() {
 }
 
 readrevs() {
-# find . -name .svn -prune -o -type f -print0 | sort -z | xargs -0 -n 10 sha256sum | sha256sum
-
   while read repo revision hash; do
     revs[$repo]=$revision
     sums[$repo]=$hash
@@ -157,8 +155,9 @@ buildcustom() {
 }
 
 usage() {
-  echo "$0 [-t]"
+  echo "$0 [-t] [-f]"
   echo "   -t: use the tip of each pulled repository instead of the revisions specified in build-revs"
+  echo "   -f: skip repository fetch"
 
   exit 1;
 }
@@ -166,9 +165,11 @@ usage() {
 declare -A sums
 declare -A revs
 
-while getopts "t" options; do
+while getopts "tf" options; do
   case $options in
     t  ) GET_TIP="yes"; shift;;
+
+    f  ) SKIP_FETCH="yes"; shift;;
 
     \? ) usage;;
 
@@ -182,7 +183,9 @@ fi
 
 readrevs
 checkdeps
-fetchall
+if [ -z "$SKIP_FETCH" ]; then
+  fetchall
+fi
 buildsrc
 patchsrc "patch"
 build
