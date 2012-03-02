@@ -21,7 +21,20 @@ checkdeps() {
   done
 }
 
-fetch() {
+makesum() {
+  find . -name .git -prune -o -name .svn -prune -o -type f -print0 | sort -z | xargs -0 -n 10 sha256sum > ../sums-${1}
+  cd ..
+  if [ -z "$GET_TIP" ]; then
+    if [ -n "${sums[${1}]}" ]; then
+      echo "${sums[${1}]}  sums-${1}" | sha256sum -c
+    else
+      echo "no sum for ${1}"
+    fi
+  fi
+  sha256sum sums-${1} > sum-${1}
+}
+
+svnfetch() {
 (
   cd src
   if ! [ -f "${2}/.svn/entries" ]; then
@@ -31,8 +44,17 @@ fetch() {
   else
     cd "${2}"
     svn cleanup
-    svn up
   fi
+  if [ -z "$GET_TIP" -a -n "${revs[${2}]}" ]; then
+    svn update -r "${revs[${2}]}"
+  else
+    svn update
+  fi
+  revision=`svn info | grep '^Revision:' | cut -f2 -d' '`
+  makesum ${2}
+  read sum ignore < sum-${2}
+  rm sum-${2}
+  echo "${2} $revision $sum" >> ../build-revs.new
 )
 }
 
@@ -43,18 +65,38 @@ gitfetch() {
     git clone "${1}" "${2}"
   else
     cd "${2}"
-    git pull
+    git fetch
   fi
+
+  if [ -z "$GET_TIP" -a -n "${revs[${2}]}" ]; then
+    git checkout -q "${revs[${2}]}"
+  else
+    git checkout master
+  fi
+  revision=`git show --pretty=format:%H`
+  makesum ${2}
+  read sum ignore < sum-${2}
+  rm sum-${2}
+  echo "${2} $revision $sum" >> ../build-revs.new
 )
 }
 
 fetchall() {
+  echo -n > build-revs.new
 #  gitfetch "git://github.com/rtreffer/smack.git" "smack"
-  fetch "http://svn.igniterealtime.org/svn/repos/smack/trunk" "smack"
-  fetch "http://svn.apache.org/repos/asf/qpid/trunk/qpid/java/management/common/src/main/" "qpid"
-  fetch "http://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/classlib/modules/auth/src/main/java/common/" "harmony"
-  fetch "https://dnsjava.svn.sourceforge.net/svnroot/dnsjava/trunk" "dnsjava"
-  fetch "https://kenai.com/svn/jbosh~main/trunk/jbosh/src/main/java" "jbosh"
+  svnfetch "http://svn.igniterealtime.org/svn/repos/smack/trunk" "smack"
+  svnfetch "http://svn.apache.org/repos/asf/qpid/trunk/qpid/java/management/common/src/main/" "qpid"
+  svnfetch "http://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/classlib/modules/auth/src/main/java/common/" "harmony"
+  svnfetch "https://dnsjava.svn.sourceforge.net/svnroot/dnsjava/trunk" "dnsjava"
+#  svnfetch "https://kenai.com/svn/jbosh~main/trunk/jbosh/src/main/java" "jbosh"
+  gitfetch "git://kenai.com/jbosh~origin" "jbosh"
+}
+
+readrevs() {
+  while read repo revision hash; do
+    revs[$repo]=$revision
+    sums[$repo]=$hash
+  done < build-revs
 }
 
 copyfolder() {
@@ -80,7 +122,7 @@ buildsrc() {
   copyfolder "src/dnsjava"  "build/src/trunk" "org"
   copyfolder "src/harmony" "build/src/trunk" "."
   copyfolder "src/custom" "build/src/trunk" "."
-  copyfolder "src/jbosh" "build/src/trunk" "."
+  copyfolder "src/jbosh/src/main/java" "build/src/trunk" "."
 }
 
 patchsrc() {
@@ -112,8 +154,38 @@ buildcustom() {
   done
 }
 
+usage() {
+  echo "$0 [-t] [-f]"
+  echo "   -t: use the tip of each pulled repository instead of the revisions specified in build-revs"
+  echo "   -f: skip repository fetch"
+
+  exit 1;
+}
+
+declare -A sums
+declare -A revs
+
+while getopts "tf" options; do
+  case $options in
+    t  ) GET_TIP="yes"; shift;;
+
+    f  ) SKIP_FETCH="yes"; shift;;
+
+    \? ) usage;;
+
+    *  ) usage;;
+  esac
+done
+
+if [ $# -ne 0 ]; then 
+  usage
+fi
+
+readrevs
 checkdeps
-fetchall
+if [ -z "$SKIP_FETCH" ]; then
+  fetchall
+fi
 buildsrc
 patchsrc "patch"
 build
