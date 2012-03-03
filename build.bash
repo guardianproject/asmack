@@ -63,6 +63,7 @@ gitfetch() {
   cd src
   if ! [ -f "${2}/.git/config" ]; then
     git clone "${1}" "${2}"
+    cd "${2}"
   else
     cd "${2}"
     git fetch
@@ -137,7 +138,7 @@ patchsrc() {
         if [ -f "../../../${1}/$PATCH" ]; then patch -p0 < "../../../${1}/$PATCH" || exit 1 ; fi
       fi
     done
-  )
+  ) || exit 1
 }
 
 build() {
