@@ -182,6 +182,9 @@ if [ $# -ne 0 ]; then
   usage
 fi
 
+# Force timezone to get deterministic results from subversion keyword substitution
+export TZ=PST8PDT
+
 readrevs
 checkdeps
 if [ -z "$SKIP_FETCH" ]; then
