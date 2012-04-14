@@ -76,7 +76,7 @@ gitfetch() {
   else
     git checkout master
   fi
-  revision=`git show --pretty=format:%H`
+  revision=`git show -s --pretty=format:%H`
   makesum ${2}
   read sum ignore < sum-${2}
   rm sum-${2}
@@ -86,8 +86,8 @@ gitfetch() {
 
 fetchall() {
   echo -n > build-revs.new
-#  gitfetch "git://github.com/rtreffer/smack.git" "smack"
-  svnfetch "http://svn.igniterealtime.org/svn/repos/smack/trunk" "smack"
+  gitfetch "git://github.com/devrandom/smack.git" "smack"
+#  svnfetch "http://svn.igniterealtime.org/svn/repos/smack/trunk" "smack"
   svnfetch "http://svn.apache.org/repos/asf/qpid/trunk/qpid/java/management/common/src/main/" "qpid"
   svnfetch "http://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/classlib/modules/auth/src/main/java/common/" "harmony"
   svnfetch "https://dnsjava.svn.sourceforge.net/svnroot/dnsjava/trunk" "dnsjava"
