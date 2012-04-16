@@ -87,6 +87,7 @@ gitfetch() {
 fetchall() {
   echo -n > build-revs.new
   gitfetch "git://github.com/devrandom/smack.git" "smack"
+  gitfetch "git://github.com/jadahl/jmdns.git" "jmdns"
 #  svnfetch "http://svn.igniterealtime.org/svn/repos/smack/trunk" "smack"
   svnfetch "http://svn.apache.org/repos/asf/qpid/trunk/qpid/java/management/common/src/main/" "qpid"
   svnfetch "http://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/classlib/modules/auth/src/main/java/common/" "harmony"
@@ -120,6 +121,7 @@ buildsrc() {
   mkdir build/src
   mkdir build/src/trunk
   copyfolder "src/smack/source/" "build/src/trunk" "."
+  copyfolder "src/jmdns/src/" "build/src/trunk" "."
   copyfolder "src/qpid/java" "build/src/trunk" "org/apache/qpid/management/common/sasl"
   copyfolder "src/novell-openldap-jldap" "build/src/trunk" "."
   copyfolder "src/dnsjava"  "build/src/trunk" "org"
