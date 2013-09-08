@@ -91,7 +91,7 @@ fetchall() {
 #  svnfetch "http://svn.igniterealtime.org/svn/repos/smack/trunk" "smack"
   svnfetch "http://svn.apache.org/repos/asf/qpid/trunk/qpid/java/management/common/src/main/" "qpid"
   svnfetch "http://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/classlib/modules/auth/src/main/java/common/" "harmony"
-  svnfetch "https://dnsjava.svn.sourceforge.net/svnroot/dnsjava/trunk" "dnsjava"
+  svnfetch "https://svn.code.sf.net/p/dnsjava/code/trunk" "dnsjava"
 #  svnfetch "https://kenai.com/svn/jbosh~main/trunk/jbosh/src/main/java" "jbosh"
   gitfetch "git://kenai.com/jbosh~origin" "jbosh"
 }
