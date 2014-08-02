@@ -107,7 +107,8 @@ copyfolder() {
 (
   (
     cd "${1}"
-    tar -cSsp --exclude-vcs "${3}"
+ #   tar -cSsp --exclude-vcs "${3}"
+    tar -cSp --exclude-vcs "${3}"
   ) | (
     cd "${2}"
     tar -xSsp
