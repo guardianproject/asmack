@@ -86,7 +86,7 @@ gitfetch() {
 
 fetchall() {
   echo -n > build-revs.new
-  gitfetch "git://github.com/devrandom/smack.git" "smack"
+  gitfetch "git://github.com/guardianproject/smack.git" "smack"
   gitfetch "git://github.com/jadahl/jmdns.git" "jmdns"
 #  svnfetch "http://svn.igniterealtime.org/svn/repos/smack/trunk" "smack"
   svnfetch "http://svn.apache.org/repos/asf/qpid/trunk/qpid/java/management/common/src/main/" "qpid"
